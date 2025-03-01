@@ -83,7 +83,9 @@ if st.button("Predict"):
     
     # Predicting for a range of future days (from day 31 onwards)
     future_days = np.array(range(31, day_input + 1))  # Generate future days from 31 to input day
-    future_days = future_days.reshape(-1, 1)  # Reshape to 2D array as required by the model
+    
+    # Reshaping to ensure future_days is a 2D array of shape (n_samples, 1)
+    future_days = future_days.reshape(-1, 1)  # Ensures that the input is in the correct shape for prediction
     
     # Make predictions for the future days
     future_predictions = model.predict(future_days)
