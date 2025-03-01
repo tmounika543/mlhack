@@ -83,6 +83,10 @@ if st.button("Predict"):
     
     # Plotting the predicted trend for the next few days
     future_days = np.array(range(31, day_input + 1)).reshape(-1, 1)  # Predict from Day 31 to user input day
+    
+    # Make sure future_days is reshaped into a 2D array
+    future_days = future_days.reshape(-1, 1)
+    
     future_predictions = model.predict(future_days)
     
     plt.figure(figsize=(10, 6))
