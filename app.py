@@ -78,17 +78,17 @@ day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_va
 
 # Predict and display graph for the selected day
 if st.button("Predict"):
-    prediction = model.predict([[day_input]])
+    prediction = model.predict([[day_input]])  # Predict for the input day
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
     
-    # Plotting the predicted trend for the next few days
-    future_days = np.array(range(31, day_input + 1)).reshape(-1, 1)  # Predict from Day 31 to user input day
+    # Predicting for a range of future days (from day 31 onwards)
+    future_days = np.array(range(31, day_input + 1))  # Generate future days from 31 to input day
+    future_days = future_days.reshape(-1, 1)  # Reshape to 2D array as required by the model
     
-    # Make sure future_days is reshaped into a 2D array
-    future_days = future_days.reshape(-1, 1)
-    
+    # Make predictions for the future days
     future_predictions = model.predict(future_days)
     
+    # Plotting the predicted trend for future days
     plt.figure(figsize=(10, 6))
     plt.plot(df_historical["day"], df_historical["cases"], label="Historical Cases", color="blue", marker="o")
     plt.plot(future_days, future_predictions, label="Predicted Cases", color="green", linestyle="--", marker="x")
