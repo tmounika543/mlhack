@@ -73,14 +73,25 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Predict next day's cases
-next_day = np.array([[31]])
-predicted_cases = model.predict(next_day)
-st.write(f"Predicted cases for Day 31: {int(predicted_cases[0])}")
-
 # User input for prediction
 day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_value=1, max_value=100)
 
+# Predict and display graph for the selected day
 if st.button("Predict"):
     prediction = model.predict([[day_input]])
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
+    
+    # Plotting the predicted trend for the next few days
+    future_days = np.array(range(31, day_input + 1)).reshape(-1, 1)  # Predict from Day 31 to user input day
+    future_predictions = model.predict(future_days)
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(df_historical["day"], df_historical["cases"], label="Historical Cases", color="blue", marker="o")
+    plt.plot(future_days, future_predictions, label="Predicted Cases", color="green", linestyle="--", marker="x")
+    plt.xlabel("Day")
+    plt.ylabel("Case Count")
+    plt.title(f"COVID-19 Predicted Cases (Day {day_input})")
+    plt.legend()
+
+    # Display the prediction graph in Streamlit
+    st.pyplot(plt)
