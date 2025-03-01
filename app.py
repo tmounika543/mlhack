@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 import streamlit as st
 
 # Fetch COVID-19 data for the USA
@@ -56,6 +57,15 @@ if st.button("Predict"):
     # Predict cases for the input day
     prediction = model.predict([[day_input]])
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
+    
+    # Calculate Mean Squared Error and R² Score on the test set
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+    
+    # Display MSE and R² score
+    st.write(f"Mean Squared Error: {mse}")
+    st.write(f"R² Score: {r2}")
     
     # Predict for future days (for plotting the trend)
     future_days = np.array(range(31, day_input + 1))  # Generate future days
