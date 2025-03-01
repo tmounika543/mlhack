@@ -79,7 +79,6 @@ import streamlit as st
 st.title("COVID-19 Cases Prediction-in USA")
 st.write("Predicting COVID-19 cases for the next day based on historical data.")
 
-# User Input
 day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_value=1, max_value=100)
 
 if st.button("Predict"):
