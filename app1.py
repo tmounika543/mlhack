@@ -82,7 +82,7 @@ st.write("Predicting COVID-19 cases for the next day based on historical data.")
 day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_value=1, max_value=100)
 
 if st.button("Predict"):
-    prediction = model.predict([[day_input]])
+    prediction = svm_model.predict([[day_input]])
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
 
 
