@@ -27,23 +27,6 @@ covid_data = {
 # Convert to Pandas DataFrame
 df = pd.DataFrame([covid_data])
 
-# Plotting the COVID-19 data for USA
-labels = ["Total Cases", "Active Cases", "Recovered", "Deaths"]
-values = [data["cases"], data["active"], data["recovered"], data["deaths"]]
-
-plt.figure(figsize=(8,5))
-plt.bar(labels, values, color=['blue', 'orange', 'green', 'red'])
-plt.xlabel("Category")
-plt.ylabel("Count")
-plt.title("COVID-19 Data for USA")
-
-# Streamlit setup
-st.title("COVID-19 Cases Prediction in USA")
-st.write("Displaying current COVID-19 data for the USA")
-
-# Show the bar plot in Streamlit
-st.pyplot(plt)
-
 # Generate random historical data for demonstration
 np.random.seed(42)
 historical_cases = np.random.randint(30000, 70000, size=30)  # Last 30 days cases
@@ -52,19 +35,7 @@ historical_deaths = np.random.randint(500, 2000, size=30)
 df_historical = pd.DataFrame({"cases": historical_cases, "deaths": historical_deaths})
 df_historical["day"] = range(1, 31)
 
-# Plot historical cases and deaths
-plt.figure(figsize=(10, 6))
-plt.plot(df_historical["day"], df_historical["cases"], label="Cases", color="blue", marker="o")
-plt.plot(df_historical["day"], df_historical["deaths"], label="Deaths", color="red", marker="x")
-plt.xlabel("Day")
-plt.ylabel("Count")
-plt.title("COVID-19 Historical Cases and Deaths (Last 30 Days)")
-plt.legend()
-
-# Show the historical data plot in Streamlit
-st.pyplot(plt)
-
-# Predicting the next day's cases using Linear Regression
+# Create a Linear Regression model
 X = df_historical[["day"]]
 y = df_historical["cases"]
 
@@ -73,31 +44,34 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# User input for prediction
+# Streamlit UI
+st.title("COVID-19 Cases Prediction-in USA")
+st.write("Predicting COVID-19 cases for the next day based on historical data.")
+
+# User Input for day number
 day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_value=1, max_value=100)
 
-# Predict and display graph for the selected day
+# Button to trigger prediction
 if st.button("Predict"):
-    prediction = model.predict([[day_input]])  # Predict for the input day
+    # Predict cases for the input day
+    prediction = model.predict([[day_input]])
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
     
-    # Predicting for a range of future days (from day 31 onwards)
-    future_days = np.array(range(31, day_input + 1))  # Generate future days from 31 to input day
+    # Predict for future days (for plotting the trend)
+    future_days = np.array(range(31, day_input + 1))  # Generate future days
+    future_days = future_days.reshape(-1, 1)  # Reshaping for prediction
     
-    # Reshaping to ensure future_days is a 2D array of shape (n_samples, 1)
-    future_days = future_days.reshape(-1, 1)  # Ensures that the input is in the correct shape for prediction
-    
-    # Make predictions for the future days
+    # Predict future cases
     future_predictions = model.predict(future_days)
     
-    # Plotting the predicted trend for future days
+    # Plotting historical and predicted cases
     plt.figure(figsize=(10, 6))
     plt.plot(df_historical["day"], df_historical["cases"], label="Historical Cases", color="blue", marker="o")
     plt.plot(future_days, future_predictions, label="Predicted Cases", color="green", linestyle="--", marker="x")
     plt.xlabel("Day")
     plt.ylabel("Case Count")
-    plt.title(f"COVID-19 Predicted Cases (Day {day_input})")
+    plt.title(f"COVID-19 Predicted Cases for Day {day_input}")
     plt.legend()
-
-    # Display the prediction graph in Streamlit
+    
+    # Show the graph in Streamlit
     st.pyplot(plt)
